@@ -8,31 +8,24 @@ const mockRaktDaanData = {
   title: "Sankalpa Rakta Daan",
   subtitle: "SAVE LIVES",
   description: "Join our sacred mission to save lives through blood donation. Our temple organizes regular blood donation camps in partnership with local hospitals and blood banks. Your contribution can make a significant difference in someone's life.",
-  benefits: [
-    {
-      title: "Health Check-up",
-      description: "Free medical check-up for all donors",
-      icon: "🏥"
-    },
-    {
-      title: "Refreshments",
-      description: "Nutritious refreshments after donation",
-      icon: "🥤"
-    },
-    {
-      title: "Certificate",
-      description: "Certificate of appreciation for donors",
-      icon: "🏆"
-    }
-  ],
+  quote: "To donate blood is to give the gift of life. It costs nothing but a few minutes of your time, but means everything to the recipient.",
   image: "https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1528&auto=format&fit=crop",
-  registrationOpen: true,
-  nextEventDate: "2024-01-15",
-  eventLocation: "Main Temple Hall",
-  contactInfo: {
-    phone: "+91 9876543210",
-    email: "raktdaan@narayangurukul.org"
-  }
+  upcomingEvents: [
+    {
+      id: 1,
+      title: "Blood Donation Camp",
+      date: "2024-01-15",
+      time: "10:00 AM - 4:00 PM",
+      location: "Main Temple Hall"
+    },
+    {
+      id: 2,
+      title: "Emergency Blood Drive",
+      date: "2024-01-25",
+      time: "9:00 AM - 3:00 PM",
+      location: "Community Center"
+    }
+  ]
 };
 
 // GET - Get rakt daan data
@@ -71,7 +64,7 @@ router.get('/', async (req, res) => {
 // PUT - Update rakt daan data
 router.put('/', requireEditor, async (req, res) => {
   try {
-    const { title, subtitle, description, benefits, image, registrationOpen, nextEventDate, eventLocation, contactInfo } = req.body;
+    const { title, subtitle, description, quote, image, upcomingEvents } = req.body;
     
     if (req.isMongoConnected) {
       let raktDaanData = await RaktDaan.findOne();
@@ -80,15 +73,13 @@ router.put('/', requireEditor, async (req, res) => {
         raktDaanData = new RaktDaan();
       }
 
-      raktDaanData.title = title || raktDaanData.title;
-      raktDaanData.subtitle = subtitle || raktDaanData.subtitle;
-      raktDaanData.description = description || raktDaanData.description;
-      raktDaanData.benefits = benefits || raktDaanData.benefits;
-      raktDaanData.image = image || raktDaanData.image;
-      raktDaanData.registrationOpen = registrationOpen !== undefined ? registrationOpen : raktDaanData.registrationOpen;
-      raktDaanData.nextEventDate = nextEventDate || raktDaanData.nextEventDate;
-      raktDaanData.eventLocation = eventLocation || raktDaanData.eventLocation;
-      raktDaanData.contactInfo = contactInfo || raktDaanData.contactInfo;
+      // Update fields
+      if (title !== undefined) raktDaanData.title = title;
+      if (subtitle !== undefined) raktDaanData.subtitle = subtitle;
+      if (description !== undefined) raktDaanData.description = description;
+      if (quote !== undefined) raktDaanData.quote = quote;
+      if (image !== undefined) raktDaanData.image = image;
+      if (upcomingEvents !== undefined) raktDaanData.upcomingEvents = upcomingEvents;
       
       await raktDaanData.save();
       
@@ -105,12 +96,9 @@ router.put('/', requireEditor, async (req, res) => {
         title: title || mockRaktDaanData.title,
         subtitle: subtitle || mockRaktDaanData.subtitle,
         description: description || mockRaktDaanData.description,
-        benefits: benefits || mockRaktDaanData.benefits,
+        quote: quote || mockRaktDaanData.quote,
         image: image || mockRaktDaanData.image,
-        registrationOpen: registrationOpen !== undefined ? registrationOpen : mockRaktDaanData.registrationOpen,
-        nextEventDate: nextEventDate || mockRaktDaanData.nextEventDate,
-        eventLocation: eventLocation || mockRaktDaanData.eventLocation,
-        contactInfo: contactInfo || mockRaktDaanData.contactInfo
+        upcomingEvents: upcomingEvents || mockRaktDaanData.upcomingEvents
       };
       
       res.json({
@@ -125,6 +113,33 @@ router.put('/', requireEditor, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error updating rakt daan data',
+      error: error.message
+    });
+  }
+});
+
+// DELETE - Reset rakt daan data to defaults
+router.delete('/', requireEditor, async (req, res) => {
+  try {
+    if (req.isMongoConnected) {
+      await RaktDaan.deleteMany({});
+      res.json({
+        success: true,
+        message: 'Rakt Daan data reset to defaults',
+        source: 'database'
+      });
+    } else {
+      res.json({
+        success: true,
+        message: 'Rakt Daan data reset to defaults (mock)',
+        source: 'mock'
+      });
+    }
+  } catch (error) {
+    console.error('Error resetting rakt daan data:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error resetting rakt daan data',
       error: error.message
     });
   }

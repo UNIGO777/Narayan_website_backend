@@ -39,9 +39,10 @@ NODE_ENV=development
 # CORS Configuration
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:5173,http://localhost:5174,http://localhost:4173,http://localhost:4174
 
-# Rate Limiting
+# Rate Limiting - High limits for development (adjust for production)
 RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX=100
+RATE_LIMIT_MAX=10000
+RATE_LIMIT_MAX_REQUESTS=10000
 
 # File Upload Configuration
 MAX_FILE_SIZE=10485760

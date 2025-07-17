@@ -1,5 +1,28 @@
 const mongoose = require('mongoose');
 
+const upcomingEventSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: String,
+    required: true
+  },
+  time: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  }
+});
+
 const raktDaanSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -20,44 +43,11 @@ const raktDaanSchema = new mongoose.Schema({
     type: String,
     default: "To donate blood is to give the gift of life. It costs nothing but a few minutes of your time, but means everything to the recipient."
   },
-  benefits: [{
-    title: String,
-    description: String,
-    icon: String
-  }],
   image: {
     type: String,
     default: "https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1528&auto=format&fit=crop"
   },
-  registrationOpen: {
-    type: Boolean,
-    default: true
-  },
-  nextEventDate: {
-    type: String,
-    default: "2024-01-15"
-  },
-  eventLocation: {
-    type: String,
-    default: "Main Temple Hall"
-  },
-  upcomingEvents: [{
-    id: Number,
-    title: String,
-    date: String,
-    time: String,
-    location: String
-  }],
-  contactInfo: {
-    phone: {
-      type: String,
-      default: "+91 9876543210"
-    },
-    email: {
-      type: String,
-      default: "raktdaan@narayangurukul.org"
-    }
-  }
+  upcomingEvents: [upcomingEventSchema]
 }, {
   timestamps: true
 });

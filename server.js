@@ -23,10 +23,21 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// Rate limiting
+// Rate limiting - Disabled for development to prevent blocking
+// If you want to enable it in production, uncomment the lines below
+/*
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
   max: parseInt(process.env.RATE_LIMIT_MAX) || 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+app.use('/api/', limiter);
+*/
+
+// Alternative: Very high limits for development (uncomment if you want some protection)
+const limiter = rateLimit({
+  windowMs:  15 * 60 * 1000, // 15 minutes
+  max:  10000, // Very high limit - 10,000 requests per 15 minutes
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);

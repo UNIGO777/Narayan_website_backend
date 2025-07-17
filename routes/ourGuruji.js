@@ -15,6 +15,23 @@ const mockOurGurujiData = {
       name: "श्री नारायण स्वामी",
       title: "मुख्य गुरुजी",
       image: "/assets/godimage.png",
+      images: [
+        {
+          url: "/assets/godimage.png",
+          alt: "श्री नारायण स्वामी",
+          caption: "मुख्य गुरुजी"
+        },
+        {
+          url: "/assets/HanumanImage.png",
+          alt: "श्री नारायण स्वामी ध्यान में",
+          caption: "ध्यान अवस्था में"
+        },
+        {
+          url: "/assets/TamplePng.png",
+          alt: "श्री नारायण स्वामी मंदिर में",
+          caption: "मंदिर परिसर में"
+        }
+      ],
       description: "हमारे मुख्य गुरुजी जो आध्यात्मिक मार्गदर्शन प्रदान करते हैं।",
       bio: "श्री नारायण स्वामी एक महान आध्यात्मिक गुरु हैं जिन्होंने अपना जीवन धर्म और आध्यात्म को समर्पित किया है।",
       achievements: [
@@ -63,9 +80,19 @@ router.put('/', requireEditor, async (req, res) => {
     
     if (!ourGuruji) {
       // Create new document if none exists
+      // Filter out invalid _id fields for new gurus
+      const processedGurus = gurus ? gurus.map(guru => {
+        const processedGuru = { ...guru };
+        // Remove _id if it's not a valid ObjectId (e.g., temporary IDs)
+        if (processedGuru._id && (typeof processedGuru._id === 'string' && processedGuru._id.match(/^\d+$/))) {
+          delete processedGuru._id;
+        }
+        return processedGuru;
+      }) : [];
+
       ourGuruji = new OurGuruji({
         sectionInfo,
-        gurus
+        gurus: processedGurus
       });
     } else {
       // Update existing document
@@ -76,7 +103,17 @@ router.put('/', requireEditor, async (req, res) => {
         };
       }
       if (gurus) {
-        ourGuruji.gurus = gurus;
+        // Filter out invalid _id fields for new gurus
+        const processedGurus = gurus.map(guru => {
+          const processedGuru = { ...guru };
+          // Remove _id if it's not a valid ObjectId (e.g., temporary IDs)
+          if (processedGuru._id && (typeof processedGuru._id === 'string' && processedGuru._id.match(/^\d+$/))) {
+            delete processedGuru._id;
+          }
+          return processedGuru;
+        });
+        
+        ourGuruji.gurus = processedGurus;
       }
     }
     

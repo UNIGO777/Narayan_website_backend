@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
 // PUT - Update about us data
 router.put('/', requireEditor, async (req, res) => {
   try {
-    const { title, subtitle, description, services, images } = req.body;
+    const { title, subtitle, description, services, images, missionStatement, visionStatement } = req.body;
     
     if (req.isMongoConnected) {
       let aboutData = await AboutUs.findOne();
@@ -88,7 +88,30 @@ router.put('/', requireEditor, async (req, res) => {
       aboutData.subtitle = subtitle || aboutData.subtitle;
       aboutData.description = description || aboutData.description;
       aboutData.services = services || aboutData.services;
-      aboutData.images = images || aboutData.images;
+      aboutData.missionStatement = missionStatement || aboutData.missionStatement;
+      aboutData.visionStatement = visionStatement || aboutData.visionStatement;
+      
+      // Handle images - convert string URLs to object format if needed
+      if (images) {
+        aboutData.images = images.map(image => {
+          if (typeof image === 'string') {
+            // If it's a string URL, convert to object format
+            return {
+              url: image,
+              alt: 'About Us Image',
+              caption: ''
+            };
+          } else if (typeof image === 'object' && image.url) {
+            // If it's already an object with url property, use it as is
+            return {
+              url: image.url,
+              alt: image.alt || 'About Us Image',
+              caption: image.caption || ''
+            };
+          }
+          return null;
+        }).filter(image => image !== null);
+      }
       
       await aboutData.save();
       
@@ -99,14 +122,33 @@ router.put('/', requireEditor, async (req, res) => {
         source: 'database'
       });
     } else {
-      // Mock update
+      // Mock update - also handle string URLs
+      const processedImages = images ? images.map(image => {
+        if (typeof image === 'string') {
+          return {
+            url: image,
+            alt: 'About Us Image',
+            caption: ''
+          };
+        } else if (typeof image === 'object' && image.url) {
+          return {
+            url: image.url,
+            alt: image.alt || 'About Us Image',
+            caption: image.caption || ''
+          };
+        }
+        return null;
+      }).filter(image => image !== null) : mockAboutUsData.images;
+      
       const updatedData = {
         ...mockAboutUsData,
         title: title || mockAboutUsData.title,
         subtitle: subtitle || mockAboutUsData.subtitle,
         description: description || mockAboutUsData.description,
         services: services || mockAboutUsData.services,
-        images: images || mockAboutUsData.images
+        images: processedImages,
+        missionStatement: missionStatement || '',
+        visionStatement: visionStatement || ''
       };
       
       res.json({

@@ -13,6 +13,20 @@ const GuruSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  images: [{
+    url: {
+      type: String,
+      required: true
+    },
+    alt: {
+      type: String,
+      default: ''
+    },
+    caption: {
+      type: String,
+      default: ''
+    }
+  }],
   bgColor: {
     type: String,
     default: 'bg-amber-50'

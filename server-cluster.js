@@ -103,10 +103,10 @@ if (cluster.isMaster) {
   };
   app.use(cors(corsOptions));
 
-  // Rate limiting
+  // Rate limiting - High limits for development to prevent blocking
   const limiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10000, // Very high limit - 10,000 requests per 15 minutes
     message: {
       success: false,
       message: 'Too many requests from this IP, please try again later.'
