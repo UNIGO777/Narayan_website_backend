@@ -116,6 +116,8 @@ app.use('/api/anya-daan', require('./routes/anyaDaan'));
 app.use('/api/spiritual-growth', require('./routes/spiritualGrowth'));
 app.use('/api/temple-history', require('./routes/templeHistory'));
 app.use('/api/books', require('./routes/books'));
+app.use('/api/maharaj-tapostal-places', require('./routes/maharajTapostalPlaces'));
+app.use('/api/vip-visits', require('./routes/vipVisits'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
