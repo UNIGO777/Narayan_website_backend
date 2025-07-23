@@ -118,6 +118,14 @@ app.use('/api/temple-history', require('./routes/templeHistory'));
 app.use('/api/books', require('./routes/books'));
 app.use('/api/maharaj-tapostal-places', require('./routes/maharajTapostalPlaces'));
 app.use('/api/vip-visits', require('./routes/vipVisits'));
+app.use('/api/contributions', require('./routes/contributions'));
+app.use('/api/brief-intro-docs', require('./routes/briefIntroDoc'));
+app.use('/api/youtube-video', require('./routes/youtubeVideo'));
+app.use('/api/bhajan-hero', require('./routes/bhajanHero'));
+app.use('/api/bhajans', require('./routes/bhajans'));
+app.use('/api/bhajan-youtube-channel', require('./routes/bhajanYoutubeChannel'));
+app.use('/api/danic-din-charya', require('./routes/danicDinCharya'));
+app.use('/api/gallery', require('./routes/gallery'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
